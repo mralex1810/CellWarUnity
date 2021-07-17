@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Cell
+  - Tentacle
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: cellCircle
+    uniqueID: 621343355
+    locked: 0
+  - name: tentacles
+    uniqueID: 2585239903
+    locked: 0
+  - name: cell
+    uniqueID: 2757894445
+    locked: 0
+  - name: cellText
+    uniqueID: 3182863349
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
