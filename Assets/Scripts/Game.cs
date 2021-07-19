@@ -93,25 +93,6 @@ public class Game : MonoBehaviourPunCallbacks, IOnEventCallback
 
     public void OnEvent(EventData photonEvent)
     {
-        if (photonEvent.Code == 100)
-        {
-            SyncCells((int[]) photonEvent.CustomData);
-            return;
-        }
-
-        if (photonEvent.Code == 101)
-        {
-            SyncTentacles((bool[,]) photonEvent.CustomData);
-            return;
-        }
-
-        if (photonEvent.Code == 102)
-        {
-            SyncOwners((byte[]) photonEvent.CustomData);
-            return;
-        }
-
-        var data = (byte[]) photonEvent.CustomData;
         switch (photonEvent.Code)
         {
             case 0:
@@ -119,22 +100,22 @@ public class Game : MonoBehaviourPunCallbacks, IOnEventCallback
                 _tick = 0;
                 break;
             case 1:
-                DoActionDestroy(data);
+                DoActionDestroy((byte[]) photonEvent.CustomData);
                 break;
             case 2:
-                DoActionAdd(data);
+                DoActionAdd((byte[]) photonEvent.CustomData);
                 break;
-            case 3:
-                DoActionDestroy(data);
-                SendEventToDoAction(data[0], data[1]);
+            case 100:
+                SyncCells((int[]) photonEvent.CustomData);
                 break;
-            case 4:
-                DoActionAdd(data);
-                SendEventToDoAction(data[0], data[1]);
+            case 101:
+                SyncTentacles((bool[,]) photonEvent.CustomData);
+                break;
+            case 102:
+                SyncOwners((byte[]) photonEvent.CustomData);
                 break;
         }
     }
-
 
     private void GenCells()
     {
@@ -289,11 +270,20 @@ public class Game : MonoBehaviourPunCallbacks, IOnEventCallback
             SendEventToDoAction(idBegin, idEnd);
         var scoreTentacle =
             (int) (Vector3.Distance(_cells[idBegin].transform.position, _cells[idEnd].transform.position) * 10);
+        if (_tentacles[idBegin, idEnd]) return;
         if (scoreTentacle <= _cellsController[idBegin].score
             && _cellsController[idBegin].tentaclesCount < _cellsController[idBegin].tentaclesMax
-            && !_tentacles[idBegin, idEnd] && !_tentacles[idEnd, idBegin])
+            && !_tentacles[idEnd, idBegin])
         {
-            _cellsController[idBegin].AddTentacle(_cells[idEnd]);
+            _cellsController[idBegin].AddTentacle(_cells[idEnd], false);
+            _tentacles[idBegin, idEnd] = true;
+        }
+        else if (scoreTentacle / 2 <= _cellsController[idBegin].score
+                 && _cellsController[idBegin].tentaclesCount < _cellsController[idBegin].tentaclesMax
+                 && _tentacles[idEnd, idBegin])
+        {
+            _cellsController[idBegin].AddTentacle(_cells[idEnd], true);
+            _cellsController[idEnd].FindTentacleByEndId(idBegin).DoBilateral();
             _tentacles[idBegin, idEnd] = true;
         }
     }
@@ -303,6 +293,7 @@ public class Game : MonoBehaviourPunCallbacks, IOnEventCallback
         if (_cellsController[idBegin].owner == PhotonNetwork.LocalPlayer.ActorNumber)
             SendEventToDoAction(idBegin, idEnd);
         _cellsController[idBegin].DestroyTentacle(idEnd);
+        if (_tentacles[idEnd, idBegin]) _cellsController[idEnd].FindTentacleByEndId(idBegin).DoUniliteral();
         _tentacles[idBegin, idEnd] = false;
     }
 
@@ -398,7 +389,7 @@ public class Game : MonoBehaviourPunCallbacks, IOnEventCallback
             }
             else if (!_tentacles[i, j] && data[i, j])
             {
-                _cellsController[i].AddTentacle(_cells[j]);
+                _cellsController[i].AddTentacle(_cells[j], _tentacles[j, i]);
                 _tentacles[i, j] = true;
             }
     }
@@ -411,5 +402,17 @@ public class Game : MonoBehaviourPunCallbacks, IOnEventCallback
                 _cellsController[i].owner = owners[i];
                 _cellsController[i].CheckOwner();
             }
+    }
+
+    public static Color ColorOfOwner(int owner)
+    {
+        Color result = owner switch
+        {
+            0 => Color.gray,
+            1 => Color.green,
+            2 => Color.red,
+            _ => Color.blue
+        };
+        return result;
     }
 }

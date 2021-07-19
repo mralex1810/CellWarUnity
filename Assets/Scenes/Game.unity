@@ -258,8 +258,8 @@ MonoBehaviour:
   cellPrefab: {fileID: 8292351584586201033, guid: 2ea3e6ce7f2c6bc48bcd61978cf733dd, type: 3}
   gameStarted: 0
   player: {fileID: 1112575048}
-  GreenScore: {fileID: 1044787234}
-  RedScore: {fileID: 1862392573}
+  greenScore: {fileID: 1044787234}
+  redScore: {fileID: 1862392573}
 --- !u!4 &421681143
 Transform:
   m_ObjectHideFlags: 0
@@ -621,7 +621,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -110.1, y: -32.683}
+  m_AnchoredPosition: {x: -110.1, y: -32.682983}
   m_SizeDelta: {x: 220.21, y: 65.375}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1044787234
@@ -862,7 +862,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 110.1, y: -32.678}
+  m_AnchoredPosition: {x: 110.1, y: -32.67801}
   m_SizeDelta: {x: 220.21, y: 65.375}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1862392573

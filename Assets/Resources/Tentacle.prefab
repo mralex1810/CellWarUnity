@@ -171,6 +171,11 @@ MonoBehaviour:
   startCellController: {fileID: 0}
   endCellController: {fileID: 0}
   score: 0
+  isStarted: 0
+  counterEnd: 0
+  counterCenter: 0
+  counter: 0
+  isBilateral: 0
 --- !u!114 &7763619134256505830
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -2,6 +2,7 @@ public class Pair<T, TU>
 {
     public T First;
     public TU Second;
+
     public Pair()
     {
     }
@@ -11,5 +12,4 @@ public class Pair<T, TU>
         First = first;
         Second = second;
     }
-    
-};
+}

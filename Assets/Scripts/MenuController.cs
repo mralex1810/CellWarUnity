@@ -1,7 +1,8 @@
 using Photon.Pun;
+using Photon.Realtime;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MenuController : MonoBehaviourPunCallbacks
 {
@@ -21,6 +22,7 @@ public class MenuController : MonoBehaviourPunCallbacks
         PhotonNetwork.GameVersion = "1";
         PhotonNetwork.ConnectUsingSettings();
     }
+
     public override void OnConnectedToMaster()
     {
         Log("Connected to Master");
@@ -28,7 +30,7 @@ public class MenuController : MonoBehaviourPunCallbacks
 
     public void CreateRoom()
     {
-        PhotonNetwork.CreateRoom(null, new Photon.Realtime.RoomOptions { MaxPlayers = 2 });
+        PhotonNetwork.CreateRoom("First", new RoomOptions {MaxPlayers = 2});
         Log("CreateRoom");
     }
 
@@ -36,17 +38,23 @@ public class MenuController : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.JoinRandomRoom();
     }
+
     public override void OnJoinedRoom()
     {
         Log("Joined the room");
         PhotonNetwork.LoadLevel("Game");
     }
 
+    public override void OnJoinRoomFailed(short returnCode, string message)
+    {
+        Log(message);
+    }
+
     public void Play()
     {
-        
         SceneManager.LoadScene("Game", LoadSceneMode.Single);
     }
+
     public void QuitGame()
     {
         print("Quit");

@@ -416,7 +416,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3602654c27e6f74ca51f1d241dbce99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LogText: {fileID: 82383820}
+  logText: {fileID: 82383820}
 --- !u!4 &535043722
 Transform:
   m_ObjectHideFlags: 0

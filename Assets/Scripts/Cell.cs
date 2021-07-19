@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class Cell : MonoBehaviour
 {
@@ -27,7 +26,7 @@ public class Cell : MonoBehaviour
     public int tentaclesMax;
     public GameObject tentaclePrefab;
     public int tentaclesCount;
-    [FormerlySerializedAs("Game")] public Game game;
+    public Game game;
     public bool gameStarted;
     private int _counter;
     private SpriteRenderer _spriteRenderer;
@@ -89,7 +88,7 @@ public class Cell : MonoBehaviour
                 lvl = NewLvl();
                 tentaclesMax = (lvl + 2) / 3;
                 if (tentaclesCount == 0) _counter += CounterController / 2;
-                foreach (Tentacle tentacle in _tentacles) tentacle.Attack(_counter / CounterController);
+                foreach (Tentacle tentacle in _tentacles) tentacle.Attack();
                 _counter %= CounterController;
             }
 
@@ -151,15 +150,15 @@ public class Cell : MonoBehaviour
         return index;
     }
 
-    public void AddTentacle(GameObject secondCell)
+    public void AddTentacle(GameObject secondCell, bool isBilateral)
     {
         GameObject tentacle = Instantiate(tentaclePrefab, new Vector3(), Quaternion.identity);
         var lineRenderer = tentacle.GetComponent<LineRenderer>();
-        var edgeCollider = tentacle.GetComponent<EdgeCollider2D>();
+        var edgeCollider2D = tentacle.GetComponent<EdgeCollider2D>();
         Vector3 positionOfFirstCell = transform.position;
         Vector3 positionOfSecondCell = secondCell.transform.position;
         lineRenderer.SetPositions(PositionsOfTentacle(positionOfFirstCell, positionOfSecondCell));
-        edgeCollider.SetPoints(new List<Vector2>
+        edgeCollider2D.SetPoints(new List<Vector2>
         {
             new Vector2(lineRenderer.GetPosition(0).x, lineRenderer.GetPosition(0).y),
             new Vector2(lineRenderer.GetPosition(1).x, lineRenderer.GetPosition(1).y)
@@ -169,9 +168,28 @@ public class Cell : MonoBehaviour
         tentacleController.startCell = gameObject;
         tentacleController.endCell = secondCell;
         tentacleController.score = (int) (Vector3.Distance(positionOfFirstCell, positionOfSecondCell) * 10);
+        if (isBilateral)
+        {
+            score += tentacleController.score / 2;
+            tentacleController.DoBilateral();
+        }
+        else
+        {
+            tentacleController.DoUniliteral();
+        }
+
         score -= tentacleController.score;
         tentaclesCount++;
         _tentacles.Add(tentacleController);
+    }
+
+    public Tentacle FindTentacleByEndId(int endId)
+    {
+        foreach (Tentacle tentacle in _tentacles)
+            if (tentacle.endCellController.id == endId)
+                return tentacle;
+
+        return null;
     }
 
     public void CircleActive(bool active)
@@ -214,6 +232,7 @@ public class Cell : MonoBehaviour
             answer[1].y = (float) (cellEnd.y + Radius * Math.Sin(alpha));
         }
 
+
         return answer;
     }
 
@@ -221,7 +240,7 @@ public class Cell : MonoBehaviour
     {
         if (attacker == owner)
         {
-            if (score >= ScoreToLvl[maxLvl]) _counter += damage * CounterController;
+            if (score >= ScoreToLvl[maxLvl]) _counter += damage * CounterController / Mathf.Max(1, tentaclesCount);
             else score = Math.Min(1000, score + damage);
         }
         else
