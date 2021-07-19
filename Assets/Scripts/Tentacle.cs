@@ -110,8 +110,13 @@ public class Tentacle : MonoBehaviourPunCallbacks
 
     public void CheckOwner()
     {
-        _lineRenderer.colorGradient = Gradients.GenGradientTwoColors
-            (Game.ColorOfOwner(startCellController.owner), Color.blue);
+
+        _lineRenderer.colorGradient = startCellController.owner switch
+        {
+            1 => Gradients.GreenBlue,
+            2 => Gradients.RedBlue,
+            _ => _lineRenderer.colorGradient
+        };
     }
 
     public void DoBilateral()
