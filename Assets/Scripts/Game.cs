@@ -282,8 +282,10 @@ public class Game : MonoBehaviourPunCallbacks, IOnEventCallback
                  && _cellsController[idBegin].tentaclesCount < _cellsController[idBegin].tentaclesMax
                  && _tentacles[idEnd, idBegin])
         {
-            _cellsController[idBegin].AddTentacle(_cells[idEnd], true);
-            _cellsController[idEnd].FindTentacleByEndId(idBegin).DoBilateral();
+            Tentacle oppositeTentacle = _cellsController[idEnd].FindTentacleByEndId(idBegin);
+            _cellsController[idBegin].AddTentacle(_cells[idEnd], true, oppositeTentacle);
+            _cellsController[idEnd].score += oppositeTentacle.score / 2;
+            oppositeTentacle.DoBilateral();
             _tentacles[idBegin, idEnd] = true;
         }
     }
@@ -293,7 +295,17 @@ public class Game : MonoBehaviourPunCallbacks, IOnEventCallback
         if (_cellsController[idBegin].owner == PhotonNetwork.LocalPlayer.ActorNumber)
             SendEventToDoAction(idBegin, idEnd);
         _cellsController[idBegin].DestroyTentacle(idEnd);
-        if (_tentacles[idEnd, idBegin]) _cellsController[idEnd].FindTentacleByEndId(idBegin).DoUniliteral();
+        if (_tentacles[idEnd, idBegin])
+        {
+            Tentacle oppositeTentacle = _cellsController[idEnd].FindTentacleByEndId(idBegin);
+            if (_cellsController[idEnd].score < oppositeTentacle.score / 2)
+            {
+                DestroyTentacle(idEnd, idBegin);
+            }
+            _cellsController[idEnd].score -= oppositeTentacle.score / 2;
+            oppositeTentacle.oppositeTentacle = null;
+            oppositeTentacle.DoUniliteral();
+        }
         _tentacles[idBegin, idEnd] = false;
     }
 

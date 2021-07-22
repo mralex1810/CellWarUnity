@@ -10,10 +10,11 @@ public class Tentacle : MonoBehaviourPunCallbacks
     public Cell startCellController;
     public Cell endCellController;
     public int score;
-    [HideInInspector] public int counterEnd;
-    [HideInInspector] public int counterCenter;
-    [HideInInspector] public int counter;
+    public int counterEnd;
+    public int counterCenter;
+    public int counter;
     public bool isBilateral;
+    public Tentacle oppositeTentacle;
     private int _damageFromStart;
     private bool _doingBilateral;
     private bool _doingUnilateral;
@@ -33,7 +34,7 @@ public class Tentacle : MonoBehaviourPunCallbacks
         _startPosition = _lineRenderer.GetPosition(0);
         _endPosition = _lineRenderer.GetPosition(1);
         counter = 0;
-        counterEnd = (int) (Vector3.Distance(_startPosition, _endPosition) * 1000);
+        counterEnd = score * 100;
         counterCenter = counterEnd / 2;
         CheckOwner();
     }
@@ -50,12 +51,16 @@ public class Tentacle : MonoBehaviourPunCallbacks
 
         if (_doingBilateral)
         {
-            if (counter > counterCenter)
-                counter = Mathf.Max(counterCenter, counter - Speed);
-            else if (counter < counterCenter)
-                counter = Mathf.Min(counterCenter, counter + Speed);
+            if (counter >= counterCenter && counter + oppositeTentacle.counter < counterEnd)
+                counter = Mathf.Max(counterCenter,Mathf.Min(counter + Speed, counterEnd - oppositeTentacle.counter));
+            else if (counter > counterCenter) counter = Mathf.Max(counterCenter, counter - Speed);
+            if (counter < counterCenter)
+                counter = Mathf.Min(counterCenter, counter + Speed, counterEnd - oppositeTentacle.counter);
+
             SetPosition();
-            if (counter == counterCenter) _doingBilateral = false;
+            if (counter == counterCenter && counter == oppositeTentacle.counter) _doingBilateral = false;
+            if (startCellController.id == 2)
+                print(counter + " " + oppositeTentacle.counter);
         }
 
         if (_damageFromStart != 0)
@@ -110,7 +115,6 @@ public class Tentacle : MonoBehaviourPunCallbacks
 
     public void CheckOwner()
     {
-
         _lineRenderer.colorGradient = startCellController.owner switch
         {
             1 => Gradients.GreenBlue,

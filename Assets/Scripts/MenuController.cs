@@ -22,7 +22,7 @@ public class MenuController : MonoBehaviourPunCallbacks
         PhotonNetwork.NickName = "Player " + Random.Range(1000, 10000);
 
         PhotonNetwork.AutomaticallySyncScene = true;
-        PhotonNetwork.GameVersion = "0.1";
+        PhotonNetwork.GameVersion = "1.1";
         PhotonNetwork.ConnectUsingSettings();
         PhotonNetwork.JoinLobby(TypedLobby.Default);
     }

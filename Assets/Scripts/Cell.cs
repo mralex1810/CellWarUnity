@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class Cell : MonoBehaviour
 {
@@ -42,7 +43,6 @@ public class Cell : MonoBehaviour
         tentaclesCount = 0;
         _counter = 0;
         score = owner == 0 ? ScoreToLvlGrayCells[lvl] : ScoreToLvl[lvl];
-        tentaclesMax = lvl / 3 + 1;
         _textScore = textScoreObject.GetComponent<TextMesh>();
         _textTentacles = textTentaclesObject.GetComponent<TextMesh>();
         _textDistance = textDistanceObject.GetComponent<TextMesh>();
@@ -54,6 +54,7 @@ public class Cell : MonoBehaviour
         _textScore.text = scoreString;
         string tentaclesString = tentaclesCount.ToString() + '/' + tentaclesMax;
         _textTentacles.text = tentaclesString;
+        NewMaxTentacles();
         maxLvl = Math.Min(7, lvl + 2);
     }
 
@@ -85,8 +86,8 @@ public class Cell : MonoBehaviour
                     score += 1;
                 }
 
-                lvl = NewLvl();
-                tentaclesMax = (lvl + 2) / 3;
+                NewLvl();
+                
                 if (tentaclesCount == 0) _counter += CounterController / 2;
                 foreach (Tentacle tentacle in _tentacles) tentacle.Attack();
                 _counter %= CounterController;
@@ -142,15 +143,24 @@ public class Cell : MonoBehaviour
         foreach (Tentacle tentacle in _tentacles) tentacle.CheckOwner();
     }
 
-    public int NewLvl()
+    private void NewMaxTentacles()
     {
-        int index = Array.BinarySearch(ScoreToLvl, score);
-        if (index < 0)
-            return ~index;
-        return index;
+        tentaclesMax = lvl / 3 + 1;
+    }
+    public void NewLvl()
+    {
+        for (int index = 0; index < ScoreToLvl.Length; index++)
+        {
+            if (ScoreToLvl[index] > score)
+            {
+                lvl = index;
+                break;
+            }
+        }
+        NewMaxTentacles();
     }
 
-    public void AddTentacle(GameObject secondCell, bool isBilateral)
+    public void AddTentacle(GameObject secondCell, bool isBilateral, Tentacle oppositeTentacle = null)
     {
         GameObject tentacle = Instantiate(tentaclePrefab, new Vector3(), Quaternion.identity);
         var lineRenderer = tentacle.GetComponent<LineRenderer>();
@@ -168,10 +178,13 @@ public class Cell : MonoBehaviour
         tentacleController.startCell = gameObject;
         tentacleController.endCell = secondCell;
         tentacleController.score = (int) (Vector3.Distance(positionOfFirstCell, positionOfSecondCell) * 10);
+        
         if (isBilateral)
         {
             score += tentacleController.score / 2;
             tentacleController.DoBilateral();
+            tentacleController.oppositeTentacle = oppositeTentacle;
+            if (oppositeTentacle != null) oppositeTentacle.oppositeTentacle = tentacleController;
         }
         else
         {
@@ -248,7 +261,7 @@ public class Cell : MonoBehaviour
             if (damage <= score)
             {
                 score -= damage;
-                if (owner != 0) lvl = NewLvl();
+                if (owner != 0) NewLvl();
             }
             else
             {
@@ -258,6 +271,7 @@ public class Cell : MonoBehaviour
                     score = damage - score;
                 owner = attacker;
                 CheckOwner();
+                NewLvl();
             }
         }
     }

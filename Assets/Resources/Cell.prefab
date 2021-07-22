@@ -468,7 +468,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b55de42a3d256364397614678bac1832, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lvl: 1
+  lvl: 0
   score: 0
   owner: 0
   textScoreObject: {fileID: 3691554469039402233}
@@ -479,11 +479,11 @@ MonoBehaviour:
   redSprite: {fileID: 21300000, guid: 43cee3afc803ae1439dd486da05fdae3, type: 3}
   graySprite: {fileID: 21300000, guid: 85b8bc32910f19745b3a4940dd5c1f37, type: 3}
   id: 0
-  maxlvl: 0
+  maxLvl: 0
   tentaclesMax: 0
   tentaclePrefab: {fileID: 846283102311297206, guid: e52801e30d3f2f3449a33e8d824a97ef, type: 3}
   tentaclesCount: 0
-  Game: {fileID: 0}
+  game: {fileID: 0}
   gameStarted: 0
 --- !u!58 &2941733049808027943
 CircleCollider2D:
