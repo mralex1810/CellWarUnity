@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 
 public class Cell : MonoBehaviour
 {
@@ -87,9 +86,9 @@ public class Cell : MonoBehaviour
                 }
 
                 NewLvl();
-                
+
                 if (tentaclesCount == 0) _counter += CounterController / 2;
-                foreach (Tentacle tentacle in _tentacles) tentacle.Attack();
+                foreach (Tentacle tentacle in _tentacles) tentacle.AttackStart();
                 _counter %= CounterController;
             }
 
@@ -147,16 +146,16 @@ public class Cell : MonoBehaviour
     {
         tentaclesMax = lvl / 3 + 1;
     }
+
     public void NewLvl()
     {
-        for (int index = 0; index < ScoreToLvl.Length; index++)
-        {
+        for (var index = 0; index < ScoreToLvl.Length; index++)
             if (ScoreToLvl[index] > score)
             {
                 lvl = index;
                 break;
             }
-        }
+
         NewMaxTentacles();
     }
 
@@ -178,7 +177,7 @@ public class Cell : MonoBehaviour
         tentacleController.startCell = gameObject;
         tentacleController.endCell = secondCell;
         tentacleController.score = (int) (Vector3.Distance(positionOfFirstCell, positionOfSecondCell) * 10);
-        
+
         if (isBilateral)
         {
             score += tentacleController.score / 2;
@@ -254,7 +253,7 @@ public class Cell : MonoBehaviour
         if (attacker == owner)
         {
             if (score >= ScoreToLvl[maxLvl]) _counter += damage * CounterController / Mathf.Max(1, tentaclesCount);
-            else score = Math.Min(1000, score + damage);
+            else score = Math.Min(ScoreToLvl[maxLvl], score + damage);
         }
         else
         {

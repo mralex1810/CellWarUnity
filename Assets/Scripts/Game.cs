@@ -298,14 +298,12 @@ public class Game : MonoBehaviourPunCallbacks, IOnEventCallback
         if (_tentacles[idEnd, idBegin])
         {
             Tentacle oppositeTentacle = _cellsController[idEnd].FindTentacleByEndId(idBegin);
-            if (_cellsController[idEnd].score < oppositeTentacle.score / 2)
-            {
-                DestroyTentacle(idEnd, idBegin);
-            }
+            if (_cellsController[idEnd].score < oppositeTentacle.score / 2) DestroyTentacle(idEnd, idBegin);
             _cellsController[idEnd].score -= oppositeTentacle.score / 2;
             oppositeTentacle.oppositeTentacle = null;
             oppositeTentacle.DoUniliteral();
         }
+
         _tentacles[idBegin, idEnd] = false;
     }
 

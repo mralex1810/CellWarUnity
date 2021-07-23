@@ -15,6 +15,8 @@ public class Tentacle : MonoBehaviourPunCallbacks
     public int counter;
     public bool isBilateral;
     public Tentacle oppositeTentacle;
+    public GameObject bulletPrefab;
+    private readonly List<Bullet> _bullets = new List<Bullet>(0);
     private int _damageFromStart;
     private bool _doingBilateral;
     private bool _doingUnilateral;
@@ -52,7 +54,7 @@ public class Tentacle : MonoBehaviourPunCallbacks
         if (_doingBilateral)
         {
             if (counter >= counterCenter && counter + oppositeTentacle.counter < counterEnd)
-                counter = Mathf.Max(counterCenter,Mathf.Min(counter + Speed, counterEnd - oppositeTentacle.counter));
+                counter = Mathf.Max(counterCenter, Mathf.Min(counter + Speed, counterEnd - oppositeTentacle.counter));
             else if (counter > counterCenter) counter = Mathf.Max(counterCenter, counter - Speed);
             if (counter < counterCenter)
                 counter = Mathf.Min(counterCenter, counter + Speed, counterEnd - oppositeTentacle.counter);
@@ -108,9 +110,33 @@ public class Tentacle : MonoBehaviourPunCallbacks
     }
     */
 
-    public void Attack()
+    public void AttackStart()
     {
-        _damageFromStart = 1;
+        Vector3 endCellPos = endCell.transform.position;
+        Vector3 startCellPos = startCell.transform.position;
+        GameObject bullet = Instantiate(bulletPrefab, _lineRenderer.GetPosition(0), Quaternion.identity);
+        var bulletController = bullet.GetComponent<Bullet>();
+        bullet.transform.rotation = Quaternion.Euler(0, 0,  
+            180f * Mathf.Atan((endCellPos.y - startCellPos.y) / (endCellPos.x - startCellPos.x)
+        ) / Mathf.PI);
+        bulletController.tentacle = this;
+        if (endCellPos.x - startCellPos.x < 0) bullet.gameObject.GetComponent<SpriteRenderer>().flipX = true;
+        _bullets.Add(bulletController);
+    }
+
+    public void AttackEnd()
+    {
+        endCellController.Attack(startCellController.owner, 1);
+    }
+
+    public void DeleteBullet(uint id)
+    {
+        foreach (Bullet bullet in _bullets)
+            if (bullet.id == id)
+            {
+                _bullets.Remove(bullet);
+                break;
+            }
     }
 
     public void CheckOwner()

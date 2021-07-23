@@ -20,8 +20,8 @@ public class Gradients
         gck[1].time = 1.0F;
         gak[0].time = -1.0F;
         gak[1].time = 1.0F;
-        gak[0].alpha = 255F;
-        gak[1].alpha = 255F;
+        gak[0].alpha = 0.75F;
+        gak[1].alpha = 0.75F;
         gck[0].color = firstColor;
         gck[1].color = secondColor;
         grad.SetKeys(gck, gak);

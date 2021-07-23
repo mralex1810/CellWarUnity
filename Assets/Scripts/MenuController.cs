@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 public class MenuController : MonoBehaviourPunCallbacks
 {
@@ -16,17 +13,17 @@ public class MenuController : MonoBehaviourPunCallbacks
     {
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 15;
-        
+
         Gradients.GenGradients();
 
         PhotonNetwork.NickName = "Player " + Random.Range(1000, 10000);
 
         PhotonNetwork.AutomaticallySyncScene = true;
-        PhotonNetwork.GameVersion = "1.1";
+        PhotonNetwork.GameVersion = "1.2";
         PhotonNetwork.ConnectUsingSettings();
         PhotonNetwork.JoinLobby(TypedLobby.Default);
     }
-    
+
     public override void OnConnectedToMaster()
     {
         Log("Connected to Master");
@@ -36,7 +33,7 @@ public class MenuController : MonoBehaviourPunCallbacks
     {
         string roomNameText = roomName.text;
         if (roomNameText == string.Empty) roomNameText = PhotonNetwork.NickName;
-        PhotonNetwork.JoinOrCreateRoom(roomNameText, new RoomOptions {MaxPlayers = 2}, TypedLobby.Default, null);
+        PhotonNetwork.JoinOrCreateRoom(roomNameText, new RoomOptions {MaxPlayers = 2}, TypedLobby.Default);
         Log(roomNameText);
     }
 
