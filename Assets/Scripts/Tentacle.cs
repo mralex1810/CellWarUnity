@@ -15,8 +15,10 @@ public class Tentacle : MonoBehaviourPunCallbacks
     public int counter;
     public bool isBilateral;
     public Tentacle oppositeTentacle;
+
     public GameObject bulletPrefab;
-    private readonly List<Bullet> _bullets = new List<Bullet>(0);
+
+    //private readonly List<Bullet> _bullets = new List<Bullet>(0);
     private int _damageFromStart;
     private bool _doingBilateral;
     private bool _doingUnilateral;
@@ -89,8 +91,7 @@ public class Tentacle : MonoBehaviourPunCallbacks
 
     private void OnMouseUpAsButton()
     {
-        if (startCellController.owner == PhotonNetwork.LocalPlayer.ActorNumber)
-            startCellController.DestroyTentacleEvent(this);
+        startCellController.TentaclePressEvent(this);
     }
 
     private void SetPosition()
@@ -116,12 +117,12 @@ public class Tentacle : MonoBehaviourPunCallbacks
         Vector3 startCellPos = startCell.transform.position;
         GameObject bullet = Instantiate(bulletPrefab, _lineRenderer.GetPosition(0), Quaternion.identity);
         var bulletController = bullet.GetComponent<Bullet>();
-        bullet.transform.rotation = Quaternion.Euler(0, 0,  
+        bullet.transform.rotation = Quaternion.Euler(0, 0,
             180f * Mathf.Atan((endCellPos.y - startCellPos.y) / (endCellPos.x - startCellPos.x)
-        ) / Mathf.PI);
+            ) / Mathf.PI);
         bulletController.tentacle = this;
         if (endCellPos.x - startCellPos.x < 0) bullet.gameObject.GetComponent<SpriteRenderer>().flipX = true;
-        _bullets.Add(bulletController);
+        //_bullets.Add(bulletController);
     }
 
     public void AttackEnd()
@@ -129,6 +130,7 @@ public class Tentacle : MonoBehaviourPunCallbacks
         endCellController.Attack(startCellController.owner, 1);
     }
 
+/*
     public void DeleteBullet(uint id)
     {
         foreach (Bullet bullet in _bullets)
@@ -138,7 +140,7 @@ public class Tentacle : MonoBehaviourPunCallbacks
                 break;
             }
     }
-
+*/
     public void CheckOwner()
     {
         _lineRenderer.colorGradient = startCellController.owner switch

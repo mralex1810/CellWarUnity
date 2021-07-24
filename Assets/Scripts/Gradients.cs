@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Gradients
+public static class Gradients
 {
     public static Gradient GreenBlue;
     public static Gradient RedBlue;

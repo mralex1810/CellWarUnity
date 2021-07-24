@@ -42,10 +42,15 @@ public class MenuController : MonoBehaviourPunCallbacks
         PhotonNetwork.JoinRandomRoom();
     }
 
+    public void PlayWithBot()
+    {
+        SceneManager.LoadScene("GameWithBots");
+    }
+
     public override void OnJoinedRoom()
     {
         Log("Joined the room");
-        PhotonNetwork.LoadLevel("Game");
+        PhotonNetwork.LoadLevel("GameWithPhoton");
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)

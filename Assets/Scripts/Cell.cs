@@ -59,11 +59,7 @@ public class Cell : MonoBehaviour
 
     public void Update()
     {
-        if (!gameStarted)
-        {
-            gameStarted = game.gameStarted;
-            return;
-        }
+        if (!game.gameStarted) return;
 
         if (owner == 0)
         {
@@ -92,10 +88,7 @@ public class Cell : MonoBehaviour
                 _counter %= CounterController;
             }
 
-            var scoreString = score.ToString();
-            _textScore.text = scoreString;
-            string tentaclesString = tentaclesCount.ToString() + '/' + tentaclesMax;
-            _textTentacles.text = tentaclesString;
+            SetStrings();
         }
     }
 
@@ -127,7 +120,8 @@ public class Cell : MonoBehaviour
 
     private void OnMouseUpAsButton()
     {
-        game.CellPressEvent(gameObject);
+        if (!game.gameStarted) return;
+        game.CellPressEvent(this);
     }
 
     public void CheckOwner()
@@ -140,6 +134,14 @@ public class Cell : MonoBehaviour
             _ => _spriteRenderer.sprite
         };
         foreach (Tentacle tentacle in _tentacles) tentacle.CheckOwner();
+    }
+
+    private void SetStrings()
+    {
+        var scoreString = score.ToString();
+        _textScore.text = scoreString;
+        string tentaclesString = tentaclesCount.ToString() + '/' + tentaclesMax;
+        _textTentacles.text = tentaclesString;
     }
 
     private void NewMaxTentacles()
@@ -157,6 +159,7 @@ public class Cell : MonoBehaviour
             }
 
         NewMaxTentacles();
+        SetStrings();
     }
 
     public void AddTentacle(GameObject secondCell, bool isBilateral, Tentacle oppositeTentacle = null)
@@ -220,9 +223,9 @@ public class Cell : MonoBehaviour
         }
     }
 
-    public void DestroyTentacleEvent(Tentacle tentacle)
+    public void TentaclePressEvent(Tentacle tentacle)
     {
-        game.DestroyTentacle(tentacle.startCellController.id, tentacle.endCellController.id);
+        game.TentaclePressEvent(tentacle);
     }
 
     private static Vector3[] PositionsOfTentacle(Vector3 cellBegin, Vector3 cellEnd)
