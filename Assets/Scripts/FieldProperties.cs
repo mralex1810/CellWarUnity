@@ -2,16 +2,14 @@
 
 public class FieldProperties
 {
-    public int greenCell;
-    public int[][] lvl;
-    public Vector3[] pos;
-    public int redCell;
+    public readonly int[][] Lvl;
+    public readonly Vector3[] Pos;
+    public readonly int[] CellOfOwners;
 
-    public FieldProperties(Vector3[] pos, int[][] lvl, int greenCell, int redCell)
+    public FieldProperties(Vector3[] pos, int[][] lvl, int[] cellOfOwners)
     {
-        this.pos = pos;
-        this.lvl = lvl;
-        this.greenCell = greenCell;
-        this.redCell = redCell;
+        this.Pos = pos;
+        this.Lvl = lvl;
+        this.CellOfOwners = cellOfOwners;
     }
 }

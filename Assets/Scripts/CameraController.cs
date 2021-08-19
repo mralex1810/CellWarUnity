@@ -1,4 +1,6 @@
+using Photon.Pun;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CameraController : MonoBehaviour
 {
@@ -7,6 +9,7 @@ public class CameraController : MonoBehaviour
     private Vector2 _f1Start;
     private float _swipeSensitivity;
     private Vector2 _swipeStart;
+    [SerializeField] private Game game; 
 
 
     private void Start()
@@ -27,6 +30,14 @@ public class CameraController : MonoBehaviour
         }
 
         if (Input.touchCount == 2) ZoomAndroid();
+
+        if (Input.GetKey("w")) transform.position = MovePosition(0f, 0.2f);
+        if (Input.GetKey("a")) transform.position = MovePosition(-0.2f, 0f);
+        if (Input.GetKey("s")) transform.position = MovePosition(0f, -0.2f);
+        if (Input.GetKey("d")) transform.position = MovePosition(0.2f, 0f);
+        if (Input.GetKey("z")) GetComponent<Camera>().orthographicSize = GetComponent<Camera>().orthographicSize + 0.5f;
+        if (Input.GetKey("x")) GetComponent<Camera>().orthographicSize = GetComponent<Camera>().orthographicSize - 0.5f;
+
     }
 
     private void ZoomAndroid()
@@ -48,7 +59,7 @@ public class CameraController : MonoBehaviour
 
     private float CameraSize(float size, float delta)
     {
-        return Mathf.Min(7, Mathf.Max(3, size + delta * Time.deltaTime * zoomSensitivity));
+        return Mathf.Min(10, Mathf.Max(4, size + delta * Time.deltaTime * zoomSensitivity));
     }
 
     private void Swipe()
@@ -69,9 +80,60 @@ public class CameraController : MonoBehaviour
         var pos = new Vector3();
         Vector3 position = transform.position;
         pos.z = position.z;
-        pos.x = Mathf.Min(14, Mathf.Max(5, position.x - posX * _swipeSensitivity));
-        pos.y = Mathf.Min(7, Mathf.Max(3, position.y - posY * _swipeSensitivity));
+
+        var posXMin = 0;
+        var posXMax = 0;
+        var posYMin = 0;
+        var posYMax = 0;
+        switch (SceneManager.GetActiveScene().name)
+        {
+            case "GameWithBots1v1":
+                posXMin = 4;
+                posYMin = 2;
+                posXMax = 15;
+                posYMax = 8;
+                break;
+            case "GameWithPhoton1v1":
+                posXMin = 4;
+                posYMin = 2;
+                posXMax = 15;
+                posYMax = 8;
+                break;
+            case "GameWithPhoton4":
+                posXMin = -17;
+                posYMin = -7;
+                posXMax = 17;
+                posYMax = 7;
+                break;
+        }
+
+        pos.x = Mathf.Min(posXMax, Mathf.Max(posXMin, position.x - posX * _swipeSensitivity));
+        pos.y = Mathf.Min(posYMax, Mathf.Max(posYMin, position.y - posY * _swipeSensitivity));
 
         return pos;
+    }
+
+    private Vector3 MovePosition(float deltaPosX, float deltaPosY)
+    {
+        var pos = new Vector3();
+        Vector3 position = transform.position;
+        pos.z = position.z;
+        pos.x = position.x + deltaPosX;
+        pos.y = position.y + deltaPosY;
+
+        return pos;
+    }
+
+    public void CentralizeCameraOnOwnerCell()
+    {
+        foreach (var cell in game.cellsController)
+        {
+            if (cell.owner == PhotonNetwork.LocalPlayer.ActorNumber)
+            {
+                var cellPos = cell.transform.position;
+                transform.position = new Vector3(cellPos.x, cellPos.y, -10);
+                break;
+            }
+        }
     }
 }

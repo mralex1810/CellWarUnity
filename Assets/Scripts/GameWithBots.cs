@@ -2,7 +2,7 @@ public class GameWithBots : Game
 {
     private AI _bot;
 
-    protected virtual void Start()
+    protected override void Start()
     {
         _bot = new AI();
         gameStarted = true;

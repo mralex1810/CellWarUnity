@@ -27,7 +27,6 @@ public class Bullet : MonoBehaviour
 
     private void OnDestroy()
     {
-        //tentacle.DeleteBullet(id);
         tentacle.AttackEnd();
     }
 

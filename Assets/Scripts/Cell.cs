@@ -21,6 +21,8 @@ public class Cell : MonoBehaviour
     public Sprite greenSprite;
     public Sprite redSprite;
     public Sprite graySprite;
+    public Sprite pinkSprite;
+    public Sprite purpleSprite;
     public int id;
     public int maxLvl;
     public int tentaclesMax;
@@ -131,6 +133,8 @@ public class Cell : MonoBehaviour
             0 => graySprite,
             1 => greenSprite,
             2 => redSprite,
+            3 => pinkSprite,
+            4 => purpleSprite,
             _ => _spriteRenderer.sprite
         };
         foreach (Tentacle tentacle in _tentacles) tentacle.CheckOwner();

@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class GameWithPhoton : Game, IOnEventCallback
 {
-    public void Start()
+    protected override void Start()
     {
         player.color = ColorOfOwner(PhotonNetwork.LocalPlayer.ActorNumber);
 
@@ -16,8 +16,14 @@ public class GameWithPhoton : Game, IOnEventCallback
     protected override void Update()
     {
         if (!gameStarted && PhotonNetwork.IsMasterClient)
-            if (PhotonNetwork.CurrentRoom.PlayerCount == 2)
-                SendEventToStart();
+        {
+            if (PhotonNetwork.CurrentRoom.PlayerCount >= 2)
+            {
+                if (tick >= 15 * 10) SendEventToStart();
+            }
+            else tick = 0;
+        }
+
         base.Update();
     }
 
@@ -32,7 +38,7 @@ public class GameWithPhoton : Game, IOnEventCallback
         }
     }
 
-    public void OnEvent(EventData photonEvent)
+    public virtual void OnEvent(EventData photonEvent)
     {
         switch (photonEvent.Code)
         {

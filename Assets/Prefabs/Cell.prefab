@@ -69,7 +69,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 621343355
-  m_SortingLayer: -4
+  m_SortingLayer: -5
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
   m_Color: {r: 0.95805883, g: 1, b: 0, a: 1}
@@ -478,6 +478,8 @@ MonoBehaviour:
   greenSprite: {fileID: 21300000, guid: f916d58298823f84bba2931627407397, type: 3}
   redSprite: {fileID: 21300000, guid: 43cee3afc803ae1439dd486da05fdae3, type: 3}
   graySprite: {fileID: 21300000, guid: 85b8bc32910f19745b3a4940dd5c1f37, type: 3}
+  pinkSprite: {fileID: 21300000, guid: d1af8e37e8927cc49b8e5911e643f0d5, type: 3}
+  purpleSprite: {fileID: 21300000, guid: 98e4bf547604d1442a707936f77154bc, type: 3}
   id: 0
   maxLvl: 0
   tentaclesMax: 0

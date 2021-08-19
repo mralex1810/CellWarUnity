@@ -8,8 +8,8 @@ public class Game : MonoBehaviourPunCallbacks
     public GameObject cellPrefab;
     public bool gameStarted;
     public Text player;
-    public Text greenScore;
-    public Text redScore;
+    [SerializeField] protected Text[] scoreTexts;
+    [SerializeField] private GameObject camera;
     public GameObject[] cells;
     public int tick;
     public Cell[] cellsController;
@@ -17,18 +17,26 @@ public class Game : MonoBehaviourPunCallbacks
     protected bool IsFirstCellPressed;
     protected bool[,] Tentacles;
 
+    protected virtual void Start()
+    {
+    }
+
     protected virtual void Update()
     {
         if (gameStarted)
         {
-            var greenScoreInt = 0;
-            var redScoreInt = 0;
+
+            var scores = new int[scoreTexts.Length];
             foreach (Cell cell in cellsController)
-                if (cell.owner == 1)
-                    greenScoreInt += cell.score;
-                else if (cell.owner == 2) redScoreInt += cell.score;
-            greenScore.text = greenScoreInt.ToString();
-            redScore.text = redScoreInt.ToString();
+            {
+                if (cell.owner == 0) continue;
+                scores[cell.owner - 1] += cell.score;
+            }
+
+            for (int i = 0; i < scoreTexts.Length; i++)
+            {
+                scoreTexts[i].text = scores[i].ToString();
+            }
         }
 
         tick++;
@@ -44,23 +52,26 @@ public class Game : MonoBehaviourPunCallbacks
         SceneManager.LoadScene("Menu");
     }
 
-    protected void GenField(FieldProperties ans)
+    protected void GenField(FieldProperties field)
     {
-        cells = new GameObject[ans.pos.Length];
-        for (var index = 0; index < ans.pos.Length; index++)
-            cells[index] = Instantiate(cellPrefab, ans.pos[index], Quaternion.identity);
+        cells = new GameObject[field.Pos.Length];
+        for (var index = 0; index < field.Pos.Length; index++)
+            cells[index] = Instantiate(cellPrefab, field.Pos[index], Quaternion.identity);
 
         Tentacles = new bool[cells.Length, cells.Length];
         cellsController = new Cell[cells.Length];
         for (var i = 0; i < cells.Length; i++) cellsController[i] = cells[i].GetComponent<Cell>();
 
-        for (var i = 0; i < ans.lvl.Length; i++)
-        for (var j = 0; j < ans.lvl[i].Length; j++)
-            cellsController[ans.lvl[i][j]].lvl = i + 1;
+        for (var i = 0; i < field.Lvl.Length; i++)
+        for (var j = 0; j < field.Lvl[i].Length; j++)
+            cellsController[field.Lvl[i][j]].lvl = i + 1;
 
-        cellsController[ans.greenCell].owner = 1;
-        cellsController[ans.redCell].owner = 2;
+        for (var owner = 0; owner < field.CellOfOwners.Length; owner++)
+        {
+            cellsController[field.CellOfOwners[owner]].owner = owner + 1;
+        }
         foreach (GameObject cell in cells) cell.GetComponent<Cell>().game = this;
+        camera.GetComponent<CameraController>().CentralizeCameraOnOwnerCell();
     }
 
     protected virtual void AddTentacle(int idBegin, int idEnd)
@@ -147,6 +158,8 @@ public class Game : MonoBehaviourPunCallbacks
             0 => Color.gray,
             1 => Color.green,
             2 => Color.red,
+            3 => new Color(255, 192, 203),
+            4 => new Color(128, 0, 128),
             _ => Color.blue
         };
         return result;

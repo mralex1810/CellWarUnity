@@ -8,6 +8,8 @@ public class MenuController : MonoBehaviourPunCallbacks
 {
     public Text logText;
     public Text roomName;
+    private bool _fourPlayersToggle = false;
+    private bool _gameWithBotsToggle = false;
 
     private void Start()
     {
@@ -31,12 +33,27 @@ public class MenuController : MonoBehaviourPunCallbacks
 
     public void CreateOrJoinRoom()
     {
+        if (_gameWithBotsToggle)
+        {
+            PlayWithBot();
+            return;
+        }
         string roomNameText = roomName.text;
         if (roomNameText == string.Empty) roomNameText = PhotonNetwork.NickName;
         PhotonNetwork.JoinOrCreateRoom(roomNameText, new RoomOptions {MaxPlayers = 2}, TypedLobby.Default);
         Log(roomNameText);
     }
+    
+    
+    public void FourPlayersToggleValueChange()
+    {
+        _fourPlayersToggle = !_fourPlayersToggle;
+    }
 
+    public void GameWithBotsToggleValueChange()
+    {
+        _gameWithBotsToggle = !_gameWithBotsToggle;
+    }
     public void JoinRoom()
     {
         PhotonNetwork.JoinRandomRoom();
@@ -44,25 +61,21 @@ public class MenuController : MonoBehaviourPunCallbacks
 
     public void PlayWithBot()
     {
-        SceneManager.LoadScene("GameWithBots");
+        //if (_fourPlayersToggle)
+        SceneManager.LoadScene("GameWithBots1v1");
     }
 
     public override void OnJoinedRoom()
     {
         Log("Joined the room");
-        PhotonNetwork.LoadLevel("GameWithPhoton");
+        PhotonNetwork.LoadLevel(_fourPlayersToggle ? "GameWithPhoton4" : "GameWithPhoton1v1");
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
         Log(message);
     }
-
-    public void Play()
-    {
-        SceneManager.LoadScene("Game", LoadSceneMode.Single);
-    }
-
+    
     public void QuitGame()
     {
         print("Quit");
@@ -72,7 +85,6 @@ public class MenuController : MonoBehaviourPunCallbacks
     private void Log(string message)
     {
         Debug.Log(message);
-        logText.text += "\n";
-        logText.text += message;
+        logText.text = message;
     }
 }
