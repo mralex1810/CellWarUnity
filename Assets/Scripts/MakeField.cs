@@ -3,7 +3,7 @@ using UnityEngine;
 
 public static class MakeField
 {
-    public static FieldProperties MakeCommon()
+    public static FieldProperties Common()
     {
         var pos = new[]
         {
@@ -66,7 +66,7 @@ public static class MakeField
         return new FieldProperties(pos, lvl, cellOfOwners);
     }
 
-    public static FieldProperties MakeFieldForFourPlayers(int randomSeed)
+    public static FieldProperties ForFourPlayers(int randomSeed)
     {
         Random.InitState(randomSeed);
         int[] maxCellsWithLvl = new int[] {0, 2, 6, 6, 5, 2, 1};

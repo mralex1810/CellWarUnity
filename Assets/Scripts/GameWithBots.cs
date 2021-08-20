@@ -6,7 +6,7 @@ public class GameWithBots : Game
     {
         _bot = new AI();
         gameStarted = true;
-        GenField(MakeField.MakeCommon());
+        GenField(MakeField.Common());
     }
 
     protected override void Update()

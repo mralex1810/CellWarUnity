@@ -10,7 +10,7 @@ public class GameWithPhoton : Game, IOnEventCallback
     {
         player.color = ColorOfOwner(PhotonNetwork.LocalPlayer.ActorNumber);
 
-        GenField(MakeField.MakeCommon());
+        GenField(MakeField.Common());
     }
 
     protected override void Update()
