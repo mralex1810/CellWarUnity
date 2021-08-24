@@ -71,11 +71,11 @@ public class GameWithPhoton : Game, IOnEventCallback
         base.AddTentacle(idBegin, idEnd);
     }
 
-    public override void DestroyTentacle(int idBegin, int idEnd)
+    public override void StartDestroyTentacle(int idBegin, int idEnd)
     {
         if (cellsController[idBegin].owner == PhotonNetwork.LocalPlayer.ActorNumber)
             SendEventToDoAction(idBegin, idEnd);
-        base.DestroyTentacle(idBegin, idEnd);
+        base.StartDestroyTentacle(idBegin, idEnd);
     }
 
     public override void CellPressEvent(Cell cellController)
@@ -174,7 +174,7 @@ public class GameWithPhoton : Game, IOnEventCallback
 
     private void DoActionDestroy(byte[] action)
     {
-        if (Tentacles[action[0], action[1]]) DestroyTentacle(action[0], action[1]);
+        if (Tentacles[action[0], action[1]]) StartDestroyTentacle(action[0], action[1]);
     }
 
     private void SyncCells(int[] cellsScore)

@@ -21,7 +21,7 @@ public class MenuController : MonoBehaviourPunCallbacks
         PhotonNetwork.NickName = "Player " + Random.Range(1000, 10000);
 
         PhotonNetwork.AutomaticallySyncScene = true;
-        PhotonNetwork.GameVersion = "1.2";
+        PhotonNetwork.GameVersion = "1.3";
         PhotonNetwork.ConnectUsingSettings();
         PhotonNetwork.JoinLobby(TypedLobby.Default);
     }
@@ -40,7 +40,7 @@ public class MenuController : MonoBehaviourPunCallbacks
         }
         string roomNameText = roomName.text;
         if (roomNameText == string.Empty) roomNameText = PhotonNetwork.NickName;
-        PhotonNetwork.JoinOrCreateRoom(roomNameText, new RoomOptions {MaxPlayers = 2}, TypedLobby.Default);
+        PhotonNetwork.JoinOrCreateRoom(roomNameText, new RoomOptions {MaxPlayers = (byte)(_fourPlayersToggle ? 4 : 2)}, TypedLobby.Default);
         Log(roomNameText);
     }
     

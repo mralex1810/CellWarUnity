@@ -15,7 +15,7 @@ public class GameWithBots : Game
 
         foreach ((int beginCell, int endCell) in actions)
             if (Tentacles[beginCell, endCell])
-                DestroyTentacle(beginCell, endCell);
+                StartDestroyTentacle(beginCell, endCell);
             else
                 AddTentacle(beginCell, endCell);
         base.Update();

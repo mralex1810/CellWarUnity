@@ -1,8 +1,9 @@
+using System;
 using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 
-public class Tentacle : MonoBehaviourPunCallbacks
+public class Tentacle : MonoBehaviour
 {
     private const int Speed = 100;
     public GameObject startCell;
@@ -22,6 +23,8 @@ public class Tentacle : MonoBehaviourPunCallbacks
     private int _damageFromStart;
     private bool _doingBilateral;
     private bool _doingUnilateral;
+    private bool _quickBreaking;
+    private bool _breaking;
     private EdgeCollider2D _edgeCollider2D;
     private Vector3 _endPosition;
     private LineRenderer _lineRenderer;
@@ -38,19 +41,24 @@ public class Tentacle : MonoBehaviourPunCallbacks
         _startPosition = _lineRenderer.GetPosition(0);
         _endPosition = _lineRenderer.GetPosition(1);
         counter = 0;
-        counterEnd = score * 100;
+        counterEnd = score * Speed;
         counterCenter = counterEnd / 2;
         CheckOwner();
     }
 
     private void Update()
     {
+        var counterStart = counter;
+        if (_breaking)
+        {
+            counter = Mathf.Max(0, counter - Speed);
+            SetPosition();
+        }
         if (_doingUnilateral)
         {
             counter = Mathf.Min(counterEnd, counter + Speed);
             SetPosition();
             if (counter == counterEnd) _doingUnilateral = false;
-            return;
         }
 
         if (_doingBilateral)
@@ -60,33 +68,34 @@ public class Tentacle : MonoBehaviourPunCallbacks
             else if (counter > counterCenter) counter = Mathf.Max(counterCenter, counter - Speed);
             if (counter < counterCenter)
                 counter = Mathf.Min(counterCenter, counter + Speed, counterEnd - oppositeTentacle.counter);
-
             SetPosition();
             if (counter == counterCenter && counter == oppositeTentacle.counter) _doingBilateral = false;
-            if (startCellController.id == 2)
-                print(counter + " " + oppositeTentacle.counter);
         }
 
+        int damage = (counterStart - counter) / Speed;
+        if (damage != 0) 
+            startCellController.Attack(startCellController.owner, damage);
+        if (_doingBilateral || _doingUnilateral || _breaking ) SetPosition();
+        if (_doingUnilateral) return;
         if (_damageFromStart != 0)
             endCellController.Attack(startCellController.owner, _damageFromStart);
         _damageFromStart = 0;
+        if (_breaking && counter == 0)
+        {
+            startCellController.SendDeleteTentacle(endCellController.id);
+            Destroy(gameObject);
+        }
     }
 
-    private void OnDestroy()
+    public void DestroyIt()
     {
-        if (_doingUnilateral)
+        if (counter == counterEnd)
         {
-            startCellController.Attack(startCellController.owner, score);
+            counter = counterCenter;
         }
-        else if (isBilateral)
-        {
-            startCellController.Attack(startCellController.owner, score / 2);
-        }
-        else
-        {
-            startCellController.Attack(startCellController.owner, score / 2);
-            endCellController.Attack(startCellController.owner, score / 2);
-        }
+        _doingBilateral = false;
+        _doingUnilateral = false;
+        _breaking = true;
     }
 
     private void OnMouseUpAsButton()
@@ -163,5 +172,16 @@ public class Tentacle : MonoBehaviourPunCallbacks
         isBilateral = false;
         _doingUnilateral = true;
         _doingBilateral = false;
+    }
+
+    public bool IsIncrease()
+    {
+        if (_doingUnilateral) return true;
+        return _doingBilateral && counter < counterCenter;
+    }
+
+    public void QuickDestroy()
+    {
+        
     }
 }

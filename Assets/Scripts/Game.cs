@@ -98,18 +98,23 @@ public class Game : MonoBehaviourPunCallbacks
         }
     }
 
-    public virtual void DestroyTentacle(int idBegin, int idEnd)
+    public virtual void StartDestroyTentacle(int idBegin, int idEnd)
     {
         cellsController[idBegin].DestroyTentacle(idEnd);
         if (Tentacles[idEnd, idBegin])
         {
             Tentacle oppositeTentacle = cellsController[idEnd].FindTentacleByEndId(idBegin);
-            if (cellsController[idEnd].score < oppositeTentacle.score / 2) DestroyTentacle(idEnd, idBegin);
+            if (cellsController[idEnd].score < oppositeTentacle.score / 2) StartDestroyTentacle(idEnd, idBegin);
             cellsController[idEnd].score -= oppositeTentacle.score / 2;
             oppositeTentacle.oppositeTentacle = null;
             oppositeTentacle.DoUniliteral();
         }
 
+        Tentacles[idBegin, idEnd] = false;
+    }
+
+    public void DeleteTentacleFromArray(int idBegin, int idEnd)
+    {
         Tentacles[idBegin, idEnd] = false;
     }
 
@@ -140,7 +145,7 @@ public class Game : MonoBehaviourPunCallbacks
 
     public virtual void TentaclePressEvent(Tentacle tentacle)
     {
-        DestroyTentacle(tentacle.startCellController.id, tentacle.endCellController.id);
+        StartDestroyTentacle(tentacle.startCellController.id, tentacle.endCellController.id);
     }
 
     public virtual int CellOverEvent(Vector3 pos)

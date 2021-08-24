@@ -187,7 +187,6 @@ public class Cell : MonoBehaviour
 
         if (isBilateral)
         {
-            score += tentacleController.score / 2;
             tentacleController.DoBilateral();
             tentacleController.oppositeTentacle = oppositeTentacle;
             if (oppositeTentacle != null) oppositeTentacle.oppositeTentacle = tentacleController;
@@ -196,19 +195,14 @@ public class Cell : MonoBehaviour
         {
             tentacleController.DoUniliteral();
         }
-
-        score -= tentacleController.score;
+        
         tentaclesCount++;
         _tentacles.Add(tentacleController);
     }
 
     public Tentacle FindTentacleByEndId(int endId)
     {
-        foreach (Tentacle tentacle in _tentacles)
-            if (tentacle.endCellController.id == endId)
-                return tentacle;
-
-        return null;
+        return _tentacles.FirstOrDefault(tentacle => tentacle.endCellController.id == endId);
     }
 
     public void CircleActive(bool active)
@@ -218,13 +212,11 @@ public class Cell : MonoBehaviour
 
     public void DestroyTentacle(int idEnd)
     {
-        foreach (Tentacle tentacle in _tentacles.Where(tentacle => tentacle.endCellController.id == idEnd))
-        {
-            _tentacles.Remove(tentacle);
-            Destroy(tentacle.gameObject);
-            tentaclesCount--;
-            break;
-        }
+        Tentacle tentacle = FindTentacleByEndId(idEnd);
+        if (tentacle == null) return;
+        _tentacles.Remove(tentacle);
+        tentacle.DestroyIt();
+        tentaclesCount--;
     }
 
     public void TentaclePressEvent(Tentacle tentacle)
@@ -259,9 +251,22 @@ public class Cell : MonoBehaviour
     {
         if (attacker == owner)
         {
-            if (score >= ScoreToLvl[maxLvl]) _counter += damage * CounterController / Mathf.Max(1, tentaclesCount);
+            if (damage < 0)
+            {
+                if (damage + score < 1)
+                {
+                    ReturnTentacles();
+                    score = 1;
+                }
+                else
+                {
+                    score += damage;
+                }
+            }
+            else if (score >= ScoreToLvl[maxLvl]) _counter += damage * CounterController / Mathf.Max(1, tentaclesCount);
             else score = Math.Min(ScoreToLvl[maxLvl], score + damage);
-        }
+            NewLvl();
+            }
         else
         {
             if (damage <= score)
@@ -280,5 +285,25 @@ public class Cell : MonoBehaviour
                 NewLvl();
             }
         }
+    }
+
+    private void ReturnTentacles()
+    {
+        for (var index = 0; index < _tentacles.Count; index++)
+        {
+            var tentacle = _tentacles[index];
+            if (tentacle.IsIncrease())
+            {
+                game.StartDestroyTentacle(tentacle.startCellController.id, tentacle.endCellController.id);
+                index--;
+            }
+
+            
+        }
+    }
+
+    public void SendDeleteTentacle(int idEnd)
+    {
+        game.DeleteTentacleFromArray(id, idEnd);
     }
 }
