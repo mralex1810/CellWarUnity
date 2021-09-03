@@ -5,11 +5,11 @@ using UnityEngine.SceneManagement;
 public class CameraController : MonoBehaviour
 {
     public float zoomSensitivity;
+    [SerializeField] private Game game;
     private Vector2 _f0Start;
     private Vector2 _f1Start;
     private float _swipeSensitivity;
     private Vector2 _swipeStart;
-    [SerializeField] private Game game; 
 
 
     private void Start()
@@ -37,7 +37,6 @@ public class CameraController : MonoBehaviour
         if (Input.GetKey("d")) transform.position = MovePosition(0.2f, 0f);
         if (Input.GetKey("z")) GetComponent<Camera>().orthographicSize = GetComponent<Camera>().orthographicSize + 0.5f;
         if (Input.GetKey("x")) GetComponent<Camera>().orthographicSize = GetComponent<Camera>().orthographicSize - 0.5f;
-
     }
 
     private void ZoomAndroid()
@@ -50,9 +49,9 @@ public class CameraController : MonoBehaviour
             _f1Start = Input.GetTouch(1).position;
         }
 
-        Vector2 f0Position = Input.GetTouch(0).position;
-        Vector2 f1Position = Input.GetTouch(1).position;
-        float dir = Mathf.Sign(Vector2.Distance(_f1Start, _f0Start) - Vector2.Distance(f0Position, f1Position));
+        var f0Position = Input.GetTouch(0).position;
+        var f1Position = Input.GetTouch(1).position;
+        var dir = Mathf.Sign(Vector2.Distance(_f1Start, _f0Start) - Vector2.Distance(f0Position, f1Position));
         GetComponent<Camera>().orthographicSize =
             CameraSize(GetComponent<Camera>().orthographicSize, dir);
     }
@@ -70,7 +69,7 @@ public class CameraController : MonoBehaviour
             return;
         }
 
-        Vector2 swipePosition = Input.GetTouch(0).position;
+        var swipePosition = Input.GetTouch(0).position;
         transform.position = SwipePosition(swipePosition.x - _swipeStart.x, swipePosition.y - _swipeStart.y);
         _swipeStart = Vector2.zero;
     }
@@ -78,7 +77,7 @@ public class CameraController : MonoBehaviour
     private Vector3 SwipePosition(float posX, float posY)
     {
         var pos = new Vector3();
-        Vector3 position = transform.position;
+        var position = transform.position;
         pos.z = position.z;
 
         var posXMin = 0;
@@ -116,7 +115,7 @@ public class CameraController : MonoBehaviour
     private Vector3 MovePosition(float deltaPosX, float deltaPosY)
     {
         var pos = new Vector3();
-        Vector3 position = transform.position;
+        var position = transform.position;
         pos.z = position.z;
         pos.x = position.x + deltaPosX;
         pos.y = position.y + deltaPosY;
@@ -127,13 +126,11 @@ public class CameraController : MonoBehaviour
     public void CentralizeCameraOnOwnerCell()
     {
         foreach (var cell in game.cellsController)
-        {
             if (cell.owner == PhotonNetwork.LocalPlayer.ActorNumber)
             {
                 var cellPos = cell.transform.position;
                 transform.position = new Vector3(cellPos.x, cellPos.y, -10);
                 break;
             }
-        }
     }
 }

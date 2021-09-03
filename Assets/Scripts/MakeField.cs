@@ -53,7 +53,7 @@ public static class MakeField
             new Vector3(18.00f, 6.50f),
             new Vector3(18.00f, 8.50f)
         };
-        int[][] lvl = new[]
+        int[][] lvl =
         {
             new[] {0, 1, 3, 4, 40, 41, 43, 44},
             new[] {2, 6, 7, 8, 36, 37, 38, 42},
@@ -69,32 +69,30 @@ public static class MakeField
     public static FieldProperties ForFourPlayers(int randomSeed)
     {
         Random.InitState(randomSeed);
-        int[] maxCellsWithLvl = new int[] {0, 2, 6, 6, 5, 2, 1};
+        int[] maxCellsWithLvl = {0, 2, 6, 6, 5, 2, 1};
         Vector3[] pos;
         var cellOfOwners = new int[4];
-        var lvl = new int[6][]; 
-        List<Vector3> posList = new List<Vector3>();
+        var lvl = new int[6][];
+        var posList = new List<Vector3>();
         while (true)
         {
-            int cells = 0;
+            var cells = 0;
             lvl = new int[6][];
-            int[] cellsWithLvl = new int[7];
-            for (int i = 1; i < maxCellsWithLvl.Length; i++)
+            var cellsWithLvl = new int[7];
+            for (var i = 1; i < maxCellsWithLvl.Length; i++)
             {
                 cellsWithLvl[i] = Random.Range(1, maxCellsWithLvl[i]);
                 var lvlList = new List<int>();
-                for (int j = cells; j < cells + cellsWithLvl[i]; j++)
-                {
-                    lvlList.Add(j);
-                }
+                for (var j = cells; j < cells + cellsWithLvl[i]; j++) lvlList.Add(j);
                 cells += cellsWithLvl[i];
                 lvl[i - 1] = lvlList.ToArray();
             }
+
             if (cells < 10) continue;
             posList.Clear();
-            
+
             var fails = 0;
-            for (int i = 0; i < cells; i++)
+            for (var i = 0; i < cells; i++)
             {
                 var newPos = new Vector3(Random.Range(1f, 20f), Random.Range(1f, 10f));
                 if (IsCellDistant(newPos, posList))
@@ -116,29 +114,16 @@ public static class MakeField
             cellOfOwners[2] = cellOfOwners[1] + cells;
             cellOfOwners[3] = cellOfOwners[2] + cells;
 
-            for (int i = 0; i < cells; i++)
-            {
-                posList.Add(new Vector3(-posList[i].x, posList[i].y));
-            }
-            for (int i = 0; i < cells; i++)
-            {
-                posList.Add(new Vector3(-posList[i].x, -posList[i].y));
-            }
-            for (int i = 0; i < cells; i++)
-            {
-                posList.Add(new Vector3(posList[i].x, -posList[i].y));
-            }
+            for (var i = 0; i < cells; i++) posList.Add(new Vector3(-posList[i].x, posList[i].y));
+            for (var i = 0; i < cells; i++) posList.Add(new Vector3(-posList[i].x, -posList[i].y));
+            for (var i = 0; i < cells; i++) posList.Add(new Vector3(posList[i].x, -posList[i].y));
 
-            for (int i = 0; i < 6; i++)
+            for (var i = 0; i < 6; i++)
             {
                 var newLvlList = new List<int>();
-                for (int j = 0; j < 4; j++)
-                {
+                for (var j = 0; j < 4; j++)
                     foreach (var id in lvl[i])
-                    {
                         newLvlList.Add(id + j * cells);
-                    }
-                }
 
                 lvl[i] = newLvlList.ToArray();
             }
@@ -148,20 +133,17 @@ public static class MakeField
         }
 
         return new FieldProperties(pos, lvl, cellOfOwners);
-
     }
 
     private static bool IsCellDistant(Vector3 cellPos, List<Vector3> posList)
     {
-        bool ans = true;
+        var ans = true;
         foreach (var pos in posList)
-        {
             if (Vector3.Distance(cellPos, pos) < 1)
             {
                 ans = false;
                 break;
             }
-        }
 
         return ans;
     }

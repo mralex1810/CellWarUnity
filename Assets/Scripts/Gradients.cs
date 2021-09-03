@@ -2,16 +2,7 @@ using UnityEngine;
 
 public static class Gradients
 {
-    public static Gradient GreenBlue;
-    public static Gradient RedBlue;
-
-    public static void GenGradients()
-    {
-        GreenBlue = GenGradientTwoColors(Color.green, Color.blue);
-        RedBlue = GenGradientTwoColors(Color.red, Color.blue);
-    }
-
-    private static Gradient GenGradientTwoColors(Color firstColor, Color secondColor)
+    public static Gradient GenGradientTwoColors(Color firstColor, Color secondColor)
     {
         var grad = new Gradient();
         var gck = new GradientColorKey[2];

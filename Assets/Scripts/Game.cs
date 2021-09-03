@@ -25,18 +25,14 @@ public class Game : MonoBehaviourPunCallbacks
     {
         if (gameStarted)
         {
-
             var scores = new int[scoreTexts.Length];
-            foreach (Cell cell in cellsController)
+            foreach (var cell in cellsController)
             {
                 if (cell.owner == 0) continue;
                 scores[cell.owner - 1] += cell.score;
             }
 
-            for (int i = 0; i < scoreTexts.Length; i++)
-            {
-                scoreTexts[i].text = scores[i].ToString();
-            }
+            for (var i = 0; i < scoreTexts.Length; i++) scoreTexts[i].text = scores[i].ToString();
         }
 
         tick++;
@@ -67,10 +63,8 @@ public class Game : MonoBehaviourPunCallbacks
             cellsController[field.Lvl[i][j]].lvl = i + 1;
 
         for (var owner = 0; owner < field.CellOfOwners.Length; owner++)
-        {
             cellsController[field.CellOfOwners[owner]].owner = owner + 1;
-        }
-        foreach (GameObject cell in cells) cell.GetComponent<Cell>().game = this;
+        foreach (var cell in cells) cell.GetComponent<Cell>().game = this;
         camera.GetComponent<CameraController>().CentralizeCameraOnOwnerCell();
     }
 
@@ -79,18 +73,16 @@ public class Game : MonoBehaviourPunCallbacks
         var scoreTentacle =
             (int) (Vector3.Distance(cells[idBegin].transform.position, cells[idEnd].transform.position) * 10);
         if (Tentacles[idBegin, idEnd]) return;
-        if (scoreTentacle <= cellsController[idBegin].score
-            && cellsController[idBegin].tentaclesCount < cellsController[idBegin].tentaclesMax
+        if (cellsController[idBegin].tentaclesCount < cellsController[idBegin].tentaclesMax
             && !Tentacles[idEnd, idBegin])
         {
-            cellsController[idBegin].AddTentacle(cells[idEnd], false);
+            cellsController[idBegin].AddTentacle(cells[idEnd]);
             Tentacles[idBegin, idEnd] = true;
         }
-        else if (scoreTentacle / 2 <= cellsController[idBegin].score
-                 && cellsController[idBegin].tentaclesCount < cellsController[idBegin].tentaclesMax
+        else if (cellsController[idBegin].tentaclesCount < cellsController[idBegin].tentaclesMax
                  && Tentacles[idEnd, idBegin])
         {
-            Tentacle oppositeTentacle = cellsController[idEnd].FindTentacleByEndId(idBegin);
+            var oppositeTentacle = cellsController[idEnd].FindTentacleByEndId(idBegin);
             cellsController[idBegin].AddTentacle(cells[idEnd], true, oppositeTentacle);
             cellsController[idEnd].score += oppositeTentacle.score / 2;
             oppositeTentacle.DoBilateral();
@@ -103,11 +95,11 @@ public class Game : MonoBehaviourPunCallbacks
         cellsController[idBegin].DestroyTentacle(idEnd);
         if (Tentacles[idEnd, idBegin])
         {
-            Tentacle oppositeTentacle = cellsController[idEnd].FindTentacleByEndId(idBegin);
+            var oppositeTentacle = cellsController[idEnd].FindTentacleByEndId(idBegin);
             if (cellsController[idEnd].score < oppositeTentacle.score / 2) StartDestroyTentacle(idEnd, idBegin);
             cellsController[idEnd].score -= oppositeTentacle.score / 2;
             oppositeTentacle.oppositeTentacle = null;
-            oppositeTentacle.DoUniliteral();
+            oppositeTentacle.DoUnilaterally();
         }
 
         Tentacles[idBegin, idEnd] = false;
@@ -158,7 +150,7 @@ public class Game : MonoBehaviourPunCallbacks
 
     public static Color ColorOfOwner(int owner)
     {
-        Color result = owner switch
+        var result = owner switch
         {
             0 => Color.gray,
             1 => Color.green,

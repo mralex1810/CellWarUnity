@@ -122,11 +122,11 @@ public class AI
     public List<(int beginCell, int endCell)> Process(GameObject[] cells, bool[,] tentacles, int tick)
     {
         var ans = new List<(int, int)>();
-        foreach (GameObject beginCell in cells)
+        foreach (var beginCell in cells)
         {
             var beginCellController = beginCell.GetComponent<Cell>();
             if (beginCellController.owner != Owner) continue;
-            foreach (GameObject endCell in cells)
+            foreach (var endCell in cells)
             {
                 var endCellController = endCell.GetComponent<Cell>();
                 if (beginCellController.id == endCellController.id) continue;
@@ -167,7 +167,7 @@ public class AI
                     };
                     var battle = 0;
                     for (var i = 0; i < signsTentacle.Length; i++)
-                    for (int j = _gens.Length / 2; j < _gens.Length; j++)
+                    for (var j = _gens.Length / 2; j < _gens.Length; j++)
                         battle += _gens[j] * signsTentacle[i] * TentacleOption[i, j - _gens.Length / 2];
                     if (battle >= 0)
                     {

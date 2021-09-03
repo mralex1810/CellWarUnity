@@ -21,7 +21,10 @@ public class GameWithPhoton : Game, IOnEventCallback
             {
                 if (tick >= 15 * 10) SendEventToStart();
             }
-            else tick = 0;
+            else
+            {
+                tick = 0;
+            }
         }
 
         base.Update();

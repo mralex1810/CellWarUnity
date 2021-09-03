@@ -13,7 +13,7 @@ public class GameWithBots : Game
     {
         var actions = _bot.Process(cells, Tentacles, tick);
 
-        foreach ((int beginCell, int endCell) in actions)
+        foreach ((var beginCell, var endCell) in actions)
             if (Tentacles[beginCell, endCell])
                 StartDestroyTentacle(beginCell, endCell);
             else

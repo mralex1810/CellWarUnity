@@ -53,7 +53,7 @@ public class Cell : MonoBehaviour
         CheckOwner();
         var scoreString = score.ToString();
         _textScore.text = scoreString;
-        string tentaclesString = tentaclesCount.ToString() + '/' + tentaclesMax;
+        var tentaclesString = tentaclesCount.ToString() + '/' + tentaclesMax;
         _textTentacles.text = tentaclesString;
         NewMaxTentacles();
         maxLvl = Math.Min(7, lvl + 2);
@@ -86,7 +86,7 @@ public class Cell : MonoBehaviour
                 NewLvl();
 
                 if (tentaclesCount == 0) _counter += CounterController / 2;
-                foreach (Tentacle tentacle in _tentacles) tentacle.AttackStart();
+                foreach (var tentacle in _tentacles) tentacle.AttackStart();
                 _counter %= CounterController;
             }
 
@@ -101,7 +101,7 @@ public class Cell : MonoBehaviour
 
     private void OnMouseOver()
     {
-        int scoreTentacle = game.CellOverEvent(transform.position);
+        var scoreTentacle = game.CellOverEvent(transform.position);
         if (scoreTentacle == 0)
         {
             textDistanceObject.GetComponent<MeshRenderer>().enabled = false;
@@ -137,14 +137,14 @@ public class Cell : MonoBehaviour
             4 => purpleSprite,
             _ => _spriteRenderer.sprite
         };
-        foreach (Tentacle tentacle in _tentacles) tentacle.CheckOwner();
+        foreach (var tentacle in _tentacles) tentacle.CheckOwner();
     }
 
     private void SetStrings()
     {
         var scoreString = score.ToString();
         _textScore.text = scoreString;
-        string tentaclesString = tentaclesCount.ToString() + '/' + tentaclesMax;
+        var tentaclesString = tentaclesCount.ToString() + '/' + tentaclesMax;
         _textTentacles.text = tentaclesString;
     }
 
@@ -166,13 +166,14 @@ public class Cell : MonoBehaviour
         SetStrings();
     }
 
-    public void AddTentacle(GameObject secondCell, bool isBilateral, Tentacle oppositeTentacle = null)
+    public void AddTentacle(GameObject secondCell, bool isBilateral = false, Tentacle oppositeTentacle = null,
+        bool quickDestroying = false)
     {
-        GameObject tentacle = Instantiate(tentaclePrefab, new Vector3(), Quaternion.identity);
+        var tentacle = Instantiate(tentaclePrefab, new Vector3(), Quaternion.identity);
         var lineRenderer = tentacle.GetComponent<LineRenderer>();
         var edgeCollider2D = tentacle.GetComponent<EdgeCollider2D>();
-        Vector3 positionOfFirstCell = transform.position;
-        Vector3 positionOfSecondCell = secondCell.transform.position;
+        var positionOfFirstCell = transform.position;
+        var positionOfSecondCell = secondCell.transform.position;
         lineRenderer.SetPositions(PositionsOfTentacle(positionOfFirstCell, positionOfSecondCell));
         edgeCollider2D.SetPoints(new List<Vector2>
         {
@@ -184,8 +185,11 @@ public class Cell : MonoBehaviour
         tentacleController.startCell = gameObject;
         tentacleController.endCell = secondCell;
         tentacleController.score = (int) (Vector3.Distance(positionOfFirstCell, positionOfSecondCell) * 10);
-
-        if (isBilateral)
+        if (quickDestroying)
+        {
+            tentacleController.QuickDestroy();
+        }
+        else if (isBilateral)
         {
             tentacleController.DoBilateral();
             tentacleController.oppositeTentacle = oppositeTentacle;
@@ -193,11 +197,14 @@ public class Cell : MonoBehaviour
         }
         else
         {
-            tentacleController.DoUniliteral();
+            tentacleController.DoUnilaterally();
         }
-        
-        tentaclesCount++;
-        _tentacles.Add(tentacleController);
+
+        if (!quickDestroying)
+        {
+            tentaclesCount++;
+            _tentacles.Add(tentacleController);
+        }
     }
 
     public Tentacle FindTentacleByEndId(int endId)
@@ -212,7 +219,7 @@ public class Cell : MonoBehaviour
 
     public void DestroyTentacle(int idEnd)
     {
-        Tentacle tentacle = FindTentacleByEndId(idEnd);
+        var tentacle = FindTentacleByEndId(idEnd);
         if (tentacle == null) return;
         _tentacles.Remove(tentacle);
         tentacle.DestroyIt();
@@ -227,7 +234,7 @@ public class Cell : MonoBehaviour
     private static Vector3[] PositionsOfTentacle(Vector3 cellBegin, Vector3 cellEnd)
     {
         var answer = new Vector3[2];
-        double alpha = Math.Atan(((double) cellEnd.y - cellBegin.y) / (cellEnd.x - cellBegin.x));
+        var alpha = Math.Atan(((double) cellEnd.y - cellBegin.y) / (cellEnd.x - cellBegin.x));
         if (cellBegin.x <= cellEnd.x)
         {
             answer[0].x = (float) (cellBegin.x + Radius * Math.Cos(alpha));
@@ -263,10 +270,17 @@ public class Cell : MonoBehaviour
                     score += damage;
                 }
             }
-            else if (score >= ScoreToLvl[maxLvl]) _counter += damage * CounterController / Mathf.Max(1, tentaclesCount);
-            else score = Math.Min(ScoreToLvl[maxLvl], score + damage);
-            NewLvl();
+            else if (score >= ScoreToLvl[maxLvl])
+            {
+                _counter += damage * CounterController / Mathf.Max(1, tentaclesCount);
             }
+            else
+            {
+                score = Math.Min(ScoreToLvl[maxLvl], score + damage);
+            }
+
+            NewLvl();
+        }
         else
         {
             if (damage <= score)
@@ -297,8 +311,6 @@ public class Cell : MonoBehaviour
                 game.StartDestroyTentacle(tentacle.startCellController.id, tentacle.endCellController.id);
                 index--;
             }
-
-            
         }
     }
 

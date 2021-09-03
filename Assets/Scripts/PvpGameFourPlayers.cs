@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
@@ -9,9 +7,9 @@ using Random = UnityEngine.Random;
 
 public class PvpGameFourPlayers : GameWithPhoton
 {
+    private bool _isFieldCreated;
     private int _seed;
-    private bool _isFieldCreated = false;
-    
+
     protected override void Start()
     {
         player.color = ColorOfOwner(PhotonNetwork.LocalPlayer.ActorNumber);
@@ -19,10 +17,9 @@ public class PvpGameFourPlayers : GameWithPhoton
         if (PhotonNetwork.LocalPlayer.IsMasterClient)
         {
             Random.InitState(DateTime.Now.Millisecond + DateTime.UtcNow.Minute * DateTime.Now.Second);
-            _seed = Random.Range(Int32.MinValue, Int32.MaxValue);
+            _seed = Random.Range(int.MinValue, int.MaxValue);
             GenField(MakeField.ForFourPlayers(_seed));
         }
-
     }
 
     protected override void Update()
@@ -45,7 +42,7 @@ public class PvpGameFourPlayers : GameWithPhoton
         if (photonEvent.Code == 50)
         {
             if (_isFieldCreated) return;
-            _seed = (int)photonEvent.CustomData;
+            _seed = (int) photonEvent.CustomData;
             GenField(MakeField.ForFourPlayers(_seed));
             _isFieldCreated = true;
         }

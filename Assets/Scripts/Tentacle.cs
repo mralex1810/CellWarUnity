@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using Photon.Pun;
 using UnityEngine;
 
 public class Tentacle : MonoBehaviour
@@ -18,13 +16,12 @@ public class Tentacle : MonoBehaviour
     public Tentacle oppositeTentacle;
 
     public GameObject bulletPrefab;
+    [SerializeField] private bool _quickBreaking;
+    private bool _breaking;
 
-    //private readonly List<Bullet> _bullets = new List<Bullet>(0);
     private int _damageFromStart;
     private bool _doingBilateral;
     private bool _doingUnilateral;
-    private bool _quickBreaking;
-    private bool _breaking;
     private EdgeCollider2D _edgeCollider2D;
     private Vector3 _endPosition;
     private LineRenderer _lineRenderer;
@@ -40,9 +37,9 @@ public class Tentacle : MonoBehaviour
         endCellController = endCell.GetComponent<Cell>();
         _startPosition = _lineRenderer.GetPosition(0);
         _endPosition = _lineRenderer.GetPosition(1);
-        counter = 0;
         counterEnd = score * Speed;
         counterCenter = counterEnd / 2;
+        counter = _quickBreaking ? counterCenter : 0;
         CheckOwner();
     }
 
@@ -54,6 +51,7 @@ public class Tentacle : MonoBehaviour
             counter = Mathf.Max(0, counter - Speed);
             SetPosition();
         }
+
         if (_doingUnilateral)
         {
             counter = Mathf.Min(counterEnd, counter + Speed);
@@ -72,10 +70,10 @@ public class Tentacle : MonoBehaviour
             if (counter == counterCenter && counter == oppositeTentacle.counter) _doingBilateral = false;
         }
 
-        int damage = (counterStart - counter) / Speed;
-        if (damage != 0) 
-            startCellController.Attack(startCellController.owner, damage);
-        if (_doingBilateral || _doingUnilateral || _breaking ) SetPosition();
+        var damage = (counterStart - counter) / Speed;
+        if (damage != 0)
+            startCellController.Attack(_quickBreaking ? endCellController.owner : startCellController.owner, damage);
+        if (_doingBilateral || _doingUnilateral || _breaking) SetPosition();
         if (_doingUnilateral) return;
         if (_damageFromStart != 0)
             endCellController.Attack(startCellController.owner, _damageFromStart);
@@ -87,20 +85,22 @@ public class Tentacle : MonoBehaviour
         }
     }
 
+    private void OnMouseUpAsButton()
+    {
+        startCellController.TentaclePressEvent(this);
+    }
+
     public void DestroyIt()
     {
         if (counter == counterEnd)
         {
             counter = counterCenter;
+            endCellController.AddTentacle(startCell, quickDestroying: true);
         }
+
         _doingBilateral = false;
         _doingUnilateral = false;
         _breaking = true;
-    }
-
-    private void OnMouseUpAsButton()
-    {
-        startCellController.TentaclePressEvent(this);
     }
 
     private void SetPosition()
@@ -122,42 +122,30 @@ public class Tentacle : MonoBehaviour
 
     public void AttackStart()
     {
-        Vector3 endCellPos = endCell.transform.position;
-        Vector3 startCellPos = startCell.transform.position;
-        GameObject bullet = Instantiate(bulletPrefab, _lineRenderer.GetPosition(0), Quaternion.identity);
+        var endCellPos = endCell.transform.position;
+        var startCellPos = startCell.transform.position;
+        var bullet = Instantiate(bulletPrefab, _lineRenderer.GetPosition(0), Quaternion.identity);
         var bulletController = bullet.GetComponent<Bullet>();
         bullet.transform.rotation = Quaternion.Euler(0, 0,
             180f * Mathf.Atan((endCellPos.y - startCellPos.y) / (endCellPos.x - startCellPos.x)
             ) / Mathf.PI);
         bulletController.tentacle = this;
         if (endCellPos.x - startCellPos.x < 0) bullet.gameObject.GetComponent<SpriteRenderer>().flipX = true;
-        //_bullets.Add(bulletController);
     }
 
     public void AttackEnd()
     {
-        endCellController.Attack(startCellController.owner, 1);
+        if (isBilateral && counter >= counterCenter || !isBilateral && counter == counterEnd)
+            endCellController.Attack(startCellController.owner, 1);
+        else
+            startCellController.Attack(startCellController.owner, 1);
     }
 
-/*
-    public void DeleteBullet(uint id)
-    {
-        foreach (Bullet bullet in _bullets)
-            if (bullet.id == id)
-            {
-                _bullets.Remove(bullet);
-                break;
-            }
-    }
-*/
     public void CheckOwner()
     {
-        _lineRenderer.colorGradient = startCellController.owner switch
-        {
-            1 => Gradients.GreenBlue,
-            2 => Gradients.RedBlue,
-            _ => _lineRenderer.colorGradient
-        };
+        _lineRenderer.colorGradient = _quickBreaking
+            ? Gradients.GenGradientTwoColors(Color.blue, Game.ColorOfOwner(endCellController.owner))
+            : Gradients.GenGradientTwoColors(Game.ColorOfOwner(startCellController.owner), Color.blue);
     }
 
     public void DoBilateral()
@@ -167,7 +155,7 @@ public class Tentacle : MonoBehaviour
         _doingUnilateral = false;
     }
 
-    public void DoUniliteral()
+    public void DoUnilaterally()
     {
         isBilateral = false;
         _doingUnilateral = true;
@@ -182,6 +170,7 @@ public class Tentacle : MonoBehaviour
 
     public void QuickDestroy()
     {
-        
+        _quickBreaking = true;
+        _breaking = true;
     }
 }

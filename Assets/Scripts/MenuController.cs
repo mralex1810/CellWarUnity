@@ -8,15 +8,13 @@ public class MenuController : MonoBehaviourPunCallbacks
 {
     public Text logText;
     public Text roomName;
-    private bool _fourPlayersToggle = false;
-    private bool _gameWithBotsToggle = false;
+    private bool _fourPlayersToggle;
+    private bool _gameWithBotsToggle;
 
     private void Start()
     {
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 15;
-
-        Gradients.GenGradients();
 
         PhotonNetwork.NickName = "Player " + Random.Range(1000, 10000);
 
@@ -38,13 +36,15 @@ public class MenuController : MonoBehaviourPunCallbacks
             PlayWithBot();
             return;
         }
-        string roomNameText = roomName.text;
+
+        var roomNameText = roomName.text;
         if (roomNameText == string.Empty) roomNameText = PhotonNetwork.NickName;
-        PhotonNetwork.JoinOrCreateRoom(roomNameText, new RoomOptions {MaxPlayers = (byte)(_fourPlayersToggle ? 4 : 2)}, TypedLobby.Default);
+        PhotonNetwork.JoinOrCreateRoom(roomNameText, new RoomOptions {MaxPlayers = (byte) (_fourPlayersToggle ? 4 : 2)},
+            TypedLobby.Default);
         Log(roomNameText);
     }
-    
-    
+
+
     public void FourPlayersToggleValueChange()
     {
         _fourPlayersToggle = !_fourPlayersToggle;
@@ -54,6 +54,7 @@ public class MenuController : MonoBehaviourPunCallbacks
     {
         _gameWithBotsToggle = !_gameWithBotsToggle;
     }
+
     public void JoinRoom()
     {
         PhotonNetwork.JoinRandomRoom();
@@ -75,7 +76,7 @@ public class MenuController : MonoBehaviourPunCallbacks
     {
         Log(message);
     }
-    
+
     public void QuitGame()
     {
         print("Quit");
