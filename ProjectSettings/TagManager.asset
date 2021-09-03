@@ -4,9 +4,9 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Cell
   - Tentacle
   - Bullet
+  - Cell
   layers:
   - Default
   - TransparentFX
@@ -41,20 +41,17 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: cellCircle
-    uniqueID: 621343355
+  - name: CellCircle
+    uniqueID: 4036739689
     locked: 0
-  - name: tentacles
-    uniqueID: 2585239903
+  - name: Tentacle
+    uniqueID: 1909233359
     locked: 0
   - name: Bullet
-    uniqueID: 1277574531
+    uniqueID: 4241813407
     locked: 0
-  - name: cell
-    uniqueID: 2757894445
-    locked: 0
-  - name: cellText
-    uniqueID: 3182863349
+  - name: Cell
+    uniqueID: 2916715017
     locked: 0
   - name: Default
     uniqueID: 0

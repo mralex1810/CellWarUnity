@@ -5,6 +5,9 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Scenes/Menu.unity
     guid: 117b6285ec7964b4fba95d6f070249ae
@@ -12,9 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/GameWithBots1v1.unity
     guid: de57d88136e6be14ea2c3cf78739d03d
   - enabled: 1
-    path: Assets/Scenes/GameWithPhoton1v1.unity
-    guid: acfd454d5e8f17145ae1299fdb036ffb
-  - enabled: 1
     path: Assets/Scenes/GameWithPhoton4.unity
     guid: 99d9383d7912c5d41b23ed53c2ea7771
+  - enabled: 1
+    path: Assets/Scenes/GameWithPhoton1v1.unity
+    guid: acfd454d5e8f17145ae1299fdb036ffb
   m_configObjects: {}
