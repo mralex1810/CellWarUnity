@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3847889583369547171}
   - component: {fileID: 7205205086451013987}
-  m_Layer: 3
+  m_Layer: 6
   m_Name: Circle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -68,8 +68,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 621343355
-  m_SortingLayer: -5
+  m_SortingLayerID: -258227607
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
   m_Color: {r: 0.95805883, g: 1, b: 0, a: 1}
@@ -93,7 +93,8 @@ GameObject:
   - component: {fileID: 3273961070916403724}
   - component: {fileID: 2015272783405016776}
   - component: {fileID: 1906742238198109398}
-  m_Layer: 3
+  - component: {fileID: 179027307454753100}
+  m_Layer: 0
   m_Name: textScore
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -177,6 +178,17 @@ TextMesh:
   m_Color:
     serializedVersion: 2
     rgba: 4278190080
+--- !u!210 &179027307454753100
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3691554469039402233}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
 --- !u!1 &4370313026863178225
 GameObject:
   m_ObjectHideFlags: 0
@@ -188,7 +200,8 @@ GameObject:
   - component: {fileID: 3022517620135308430}
   - component: {fileID: 8965382997723293824}
   - component: {fileID: 5677747902100528809}
-  m_Layer: 3
+  - component: {fileID: 1266690518464008395}
+  m_Layer: 0
   m_Name: textTentacles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -272,6 +285,17 @@ TextMesh:
   m_Color:
     serializedVersion: 2
     rgba: 4278190080
+--- !u!210 &1266690518464008395
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4370313026863178225}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
 --- !u!1 &7618129420222347065
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,7 +307,7 @@ GameObject:
   - component: {fileID: 5376509633789243447}
   - component: {fileID: 298107324218482506}
   - component: {fileID: 1106228341973613956}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: textDistance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -380,7 +404,7 @@ GameObject:
   - component: {fileID: 2376856122884306635}
   - component: {fileID: 2941733049808027943}
   - component: {fileID: 5061850441821938685}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Cell
   m_TagString: Cell
   m_Icon: {fileID: 0}
@@ -442,8 +466,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -1537072851
-  m_SortingLayer: -2
+  m_SortingLayerID: -1378252279
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 85b8bc32910f19745b3a4940dd5c1f37, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
